@@ -1,0 +1,46 @@
+
+import pandas as pd
+import numpy as np
+from matplotlib import pyplot as plt
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+import warnings
+warnings.filterwarnings('ignore')
+#%matplotlib inline
+
+df = pd.read_csv(r"D:\dbms\insurance_data - insurance_data.csv")
+print("Dataset Preview:")
+print(df.head())
+
+plt.scatter(df['age'], df['bought_insurance'], marker='+', color='red')
+plt.xlabel("Customer Age")
+plt.ylabel("Bought Insurance (0=No, 1=Yes)")
+plt.title("Customer Age vs Insurance Purchase")
+plt.show()
+
+X = df[['age']]  # Feature
+y = df['bought_insurance']  # Label
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+model = LogisticRegression()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+print("\nPredictions on test set:")
+print(y_pred)
+
+score = accuracy_score(y_test, y_pred)
+print(f"\nAccuracy of the model: {score:.2f}")
+
+probs = model.predict_proba(X_test)
+print("\nPredicted probabilities (for each class [0, 1]):")
+print(probs)
+
+age_input = 25
+probability = model.predict_proba([[age_input]])[0][1]
+print(f"\nProbability that a customer of age {age_input} buys insurance: {probability:.2f}")
+
+def prediction_function(age):
+    return model.predict_proba([[age]])[0][1]
+
+print("\nPrediction function result for age 30:")
+print(prediction_function(30))
