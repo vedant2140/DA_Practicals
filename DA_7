@@ -1,0 +1,40 @@
+import pandas as pd
+import numpy as np
+from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
+import warnings
+warnings.filterwarnings('ignore')
+#%matplotlib inline
+
+df = pd.read_csv(r"D:\dbms\homeprice_train - homeprice_train.csv")
+print("Training Data:")
+print(df)
+
+plt.xlabel("Area (sq ft)")
+plt.ylabel("Price (in thousands)")
+plt.title("Area vs Price")
+plt.scatter(df['area'], df['price'], color='red', marker='+')
+plt.show()
+
+X = df[['area']]  # Features as 2D array
+y = df['price']   # Target
+model = LinearRegression()
+model.fit(X, y)
+predicted_price = model.predict([[3300]])
+print(f"Predicted price for 3300 sq ft = {predicted_price[0]:.2f}")
+
+print(f"Model Coefficient (slope): {model.coef_[0]:.2f}")
+print(f"Model Intercept: {model.intercept_:.2f}")
+
+test_df = pd.read_csv(r"D:\dbms\homeprice_test - homeprice_test.csv")
+print("\nTest Data (Areas):")
+print(test_df)
+
+predicted_prices = model.predict(test_df)
+
+test_df['predicted_price'] = predicted_prices
+print("\nTest Data with Predicted Prices:")
+print(test_df)
+
+test_df.to_csv("homeprice_predictions.csv", index=False)
+print("\nPredictions saved to 'homeprice_predictions.csv'")
